@@ -1,26 +1,70 @@
 
+import { Component } from 'react';
 import Header from '../header';
 import Footer from '../footer/footer';
-import Main from '../main';
+import TaskList from '../task-list/task-list';
+
 import './app.css';
 
-const App = () => {
+export default class App extends Component {
 
-  const taskData = [
-    {description: 'Completed task', created: 'today', completed: true, id: 1},
-    {description: 'Editing task', created: 'today', editing: true, id: 2},
-    {description: 'Active task', created: 'today', id: 3},
-  ]
+  state = {
+    taskData: [
+      {description: 'Completed task', created: 'today', editing: false, completed: false, id: 1},
+      {description: 'Editing task', created: 'today', editing: false, completed: false, id: 2},
+      {description: 'Active task', created: 'today', editing: false, completed: false, id: 3},
+    ]
+  }
 
-  let taskCounter = 1;
+  onComplete = (id) => {
+    this.setState(({taskData}) => {
+      const idx = taskData.findIndex((item) => item.id === id);
+      let newItem = taskData[idx];
 
-  return (
-    <section className='todoapp'>
-      <Header />
-      <Main taskListData={taskData}/>
-      <Footer taskCounter={taskCounter} />
-    </section>
-  );
+      newItem = { ...taskData[idx], completed: !taskData[idx].completed };
+
+      const newArray = [
+        ...taskData.slice(0, idx),
+        newItem,
+        ...taskData.slice(idx + 1)
+      ];
+
+      console.log(newArray);
+      
+      return {taskData: newArray};
+    });
+  }
+
+  onDelete = (id) => {
+    this.setState(({taskData}) => {
+      const idx = taskData.findIndex((item) => item.id === id);
+      const newArray = [
+        ...taskData.slice(0, idx),
+        ...taskData.slice(idx + 1)
+      ];
+
+      console.log(newArray);
+
+      return {taskData: newArray};
+    });
+  }
+
+  render() {
+    const {taskData} = this.state;
+    let taskCounter = taskData.length;
+  
+    return (
+      <section className='todoapp'>
+        <Header />
+        <TaskList 
+          tasks={taskData}
+          onComplete={this.onComplete} 
+          onDelete={this.onDelete}
+           />
+        <Footer taskCounter={taskCounter} />
+      </section>
+    );
+  }
+
 }
 
-export default App;

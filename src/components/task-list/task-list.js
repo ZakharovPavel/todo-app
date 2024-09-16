@@ -1,24 +1,28 @@
-import './task-list.css';
 import Task from "../task";
 
-const TaskList = ({tasks}) => {
+import './task-list.css';
+
+const TaskList = ({tasks, onComplete, onDelete}) => {
 
   const elements = tasks.map((item) => {
     const {id, ...taskProps} = item;
 
-    let className; 
-    if (taskProps.completed) className = 'completed';
-    else if (taskProps.editing) className = 'editing';
+    let classNames;
+    if (item.completed) classNames = 'completed';
+    else if (item.editing) classNames = 'editing';
 
     return (
-      <li key={id} className={className}>
-        <Task {...taskProps} />
+      <li key={id} className={classNames}>
+        <Task
+          {...taskProps}
+          onComplete={() => onComplete(id)}
+          onDelete={() => onDelete(id)} 
+          />
         <input type="text" className="edit" defaultValue="Editing task" />
       </li>
     );
 
   });
-
 
   return (
     <section className="main">
