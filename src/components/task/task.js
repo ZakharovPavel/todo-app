@@ -1,16 +1,38 @@
+import { formatDistanceToNow } from "date-fns";
+import PropTypes from "prop-types";
+
 import "./task.css";
 
-const Task = ({description, created, onComplete, onDelete}) => {
+const Task = ({
+  description = '', 
+  created = new Date().toString,
+  completed = false, 
+  onComplete = () => {}, 
+  onDelete = () => {}
+}) => {
+
+  const createdCounter = formatDistanceToNow(
+    new Date(created), 
+    {
+      includeSeconds: true,
+      addSuffix: true
+    }
+  );
 
   return (
     <div className="view">
-      <input className="toggle" type="checkbox" />
+      <input 
+        className="toggle" 
+        type="checkbox"
+        checked={completed}
+        onChange={onComplete}
+      />
       <label>
         <span className="description"
           onClick={onComplete}>
           {description}
         </span>
-        <span className="created">{created}</span>
+        <span className="created">created {createdCounter}</span>
       </label>
       <button className="icon icon-edit"></button>
       <button 
@@ -20,44 +42,12 @@ const Task = ({description, created, onComplete, onDelete}) => {
   );
 }
 
+Task.propTypes = {
+  description: PropTypes.string,
+  created: PropTypes.string,
+  completed: PropTypes.bool,
+  onComplete: PropTypes.func,
+  onDelete: PropTypes.func
+}
+
 export default Task;
-
-// export default class Task extends Component {
-//   // = ({description, created, editing = false, completed = false}) =>
-
-//   // state = {
-//   //   completed: false,
-//   // };
-
-//   onDescriptionClick = () => {
-//     this.setState((prevState) => {
-//       console.log('123');
-//       return {
-//         completed: !prevState.completed
-//       }
-//     })
-//   }
-
-//   render() {
-//     const { description, created, onComplete } = this.props;
-//     // const { completed } = this.state;
-
-//     return (
-//       <div className="view">
-//         <input className="toggle" type="checkbox" />
-//         <label>
-//           <span className="description"
-//             onClick={onComplete}
-//             // onClick={console.log('123')}
-//             // onClick={this.onDescriptionClick}
-//             >
-//             {description}
-//           </span>
-//           <span className="created">{created}</span>
-//         </label>
-//         <button className="icon icon-edit"></button>
-//         <button className="icon icon-destroy"></button>
-//       </div>
-//     );
-//   }
-// }

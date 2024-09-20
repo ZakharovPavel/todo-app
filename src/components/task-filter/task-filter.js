@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import './task-filter.css';
 
 const filterButtons = [
@@ -6,7 +8,7 @@ const filterButtons = [
   {name: 'completed', label: 'Completed'}
 ];
 
-const TaskFilter = ({filter, onFilterChange = () => {}}) => {
+const TaskFilter = ({filter = 'all', onFilterChange = () => {}}) => {
 
   const buttons = filterButtons.map(({name, label}) => {
 
@@ -31,6 +33,11 @@ const TaskFilter = ({filter, onFilterChange = () => {}}) => {
       {buttons}
     </ul>
   );
+}
+
+TaskFilter.propTypes = {
+  filter: PropTypes.string,
+  onFilterChange: PropTypes.func
 }
 
 export default TaskFilter;

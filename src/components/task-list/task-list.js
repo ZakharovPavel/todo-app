@@ -1,8 +1,13 @@
+import PropTypes from "prop-types";
 import Task from "../task";
 
 import './task-list.css';
 
-const TaskList = ({tasks, onComplete, onDelete}) => {
+const TaskList = ({
+  tasks = [], 
+  onComplete = () => {}, 
+  onDelete = () => {}
+}) => {
 
   const elements = tasks.map((item) => {
     const {id, ...taskProps} = item;
@@ -32,5 +37,11 @@ const TaskList = ({tasks, onComplete, onDelete}) => {
     </section>
   );
 };
+
+TaskList.propTypes = {
+  tasks: PropTypes.arrayOf(PropTypes.object),
+  onComplete: PropTypes.func,
+  onDelete: PropTypes.func
+}
 
 export default TaskList;

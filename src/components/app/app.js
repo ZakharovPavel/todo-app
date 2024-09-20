@@ -1,5 +1,6 @@
 
 import { Component } from 'react';
+
 import Header from '../header';
 import Footer from '../footer/footer';
 import TaskList from '../task-list/task-list';
@@ -20,9 +21,12 @@ export default class App extends Component {
   }
 
   createTaskItem(description) {
+
+    const createdDate = new Date().toString();
+
     return {
       description: description,
-      created: 'today',
+      created: createdDate,
       editing: false,
       completed: false,
       id: this.taskId++
@@ -106,7 +110,7 @@ export default class App extends Component {
     const {taskData, filter} = this.state;
     const filteredItems = this.filterItems(taskData, filter);
 
-    let activeTaskCounter = taskData.filter(el => !el.completed).length;
+    const activeTaskCounter = taskData.filter(el => !el.completed).length;
   
     return (
       <section className='todoapp'>

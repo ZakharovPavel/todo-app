@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { Component } from 'react';
 
 import './new-task-form.css';
@@ -35,5 +36,9 @@ export default class NewTaskForm extends Component {
     );
   }
 
+}
+
+NewTaskForm.propTypes = {
+  onItemAdded: PropTypes.func
 }
 
