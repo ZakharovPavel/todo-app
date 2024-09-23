@@ -1,19 +1,20 @@
-import PropTypes from "prop-types";
-import NewTaskForm from "../new-task-form";
+import PropTypes from 'prop-types'
 
-import './header.css';
+import NewTaskForm from '../new-task-form'
 
-const Header = ({onItemAdded = () => {}}) => {
+import './header.css'
+
+function Header({ onItemAdded = () => {} }) {
   return (
     <header className="header">
       <h1>todos</h1>
       <NewTaskForm onItemAdded={onItemAdded} />
     </header>
-  );
+  )
 }
 
 Header.propTypes = {
-  onItemAdded: PropTypes.func
+  onItemAdded: PropTypes.func.isRequired,
 }
 
-export default Header;
+export default Header

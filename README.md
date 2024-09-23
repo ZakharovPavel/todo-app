@@ -6,6 +6,8 @@
     (*)Текст предупреждения: 
     Warning: Task: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.
 
+- Редактирование задач в процессе
+
 
 
 
