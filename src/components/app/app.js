@@ -46,6 +46,52 @@ export default class App extends Component {
     })
   }
 
+  onEdit = (id) => {
+    this.setState(({ taskData }) => {
+      const idx = taskData.findIndex((item) => item.id === id)
+
+      const oldItem = taskData[idx]
+      const newItem = {
+        ...oldItem,
+        editing: !oldItem.editing,
+      }
+
+      const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+
+      return { taskData: newArray }
+    })
+  }
+
+  // changeItem = (id, text) => {
+  //   this.setState(({ taskData }) => {
+  //     const idx = taskData.findIndex((item) => item.id === id)
+
+  //     const oldItem = taskData[idx]
+  //     const createdDate = new Date().toString()
+  //     const newItem = {
+  //       ...oldItem,
+  //       description: text,
+  //       created: createdDate,
+  //       editing: false,
+  //     }
+
+  //     const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+
+  //     return { taskData: newArray }
+  //   })
+  // }
+
+  changeItem = (nextItem) => {
+    this.setState(({ taskData }) => {
+      return {
+        taskData: taskData.map((t) => {
+          if (t.id === nextItem.id) return nextItem
+          return t
+        }),
+      }
+    })
+  }
+
   addItem = (text) => {
     const newTask = this.createTaskItem(text)
 
@@ -105,7 +151,13 @@ export default class App extends Component {
     return (
       <section className="todoapp">
         <Header onItemAdded={this.addItem} />
-        <TaskList tasks={filteredItems} onComplete={this.onComplete} onDelete={this.deleteItem} />
+        <TaskList
+          tasks={filteredItems}
+          onComplete={this.onComplete}
+          onDelete={this.deleteItem}
+          onEdit={this.onEdit}
+          onChangeItem={this.changeItem}
+        />
         <Footer
           taskCounter={activeTaskCounter}
           filter={filter}

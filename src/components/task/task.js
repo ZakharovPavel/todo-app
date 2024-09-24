@@ -1,6 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
 import PropTypes from 'prop-types'
-
 import './task.css'
 
 function Task({
@@ -9,6 +8,7 @@ function Task({
   completed = false,
   onComplete = () => {},
   onDelete = () => {},
+  onEdit = () => {},
 }) {
   const createdCounter = formatDistanceToNow(new Date(created), {
     includeSeconds: true,
@@ -24,7 +24,7 @@ function Task({
         </span>
         <span className="created">created {createdCounter}</span>
       </label>
-      <button type="button" className="icon icon-edit" aria-label="Edit task" />
+      <button type="button" className="icon icon-edit" onClick={onEdit} aria-label="Edit task" />
       <button type="button" className="icon icon-destroy" onClick={onDelete} aria-label="Delete task" />
     </div>
   )
@@ -36,6 +36,7 @@ Task.propTypes = {
   completed: PropTypes.bool.isRequired,
   onComplete: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
 }
 
 export default Task

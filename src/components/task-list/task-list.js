@@ -4,25 +4,47 @@ import Task from '../task'
 
 import './task-list.css'
 
-function TaskList({ tasks = [], onComplete = () => {}, onDelete = () => {} }) {
+function TaskList({
+  tasks = [],
+  onComplete = () => {},
+  onDelete = () => {},
+  onEdit = () => {},
+  onChangeItem = () => {},
+}) {
   const elements = tasks.map((item) => {
     const { id, ...taskProps } = item
-    const { description, created, completed } = taskProps
+    const { description, created, editing, completed } = taskProps
 
     let classNames
     if (item.completed) classNames = 'completed'
-    else if (item.editing) classNames = 'editing'
+    if (item.editing) classNames = 'editing'
+
+    const onSubmit = (e) => {
+      e.preventDefault()
+      onEdit(id)
+    }
+
+    const changeItemHandler = (e) => {
+      onChangeItem({
+        ...item,
+        description: e.target.value,
+      })
+    }
 
     return (
       <li key={id} className={classNames}>
         <Task
           description={description}
           created={created}
+          editing={editing}
           completed={completed}
           onComplete={() => onComplete(id)}
           onDelete={() => onDelete(id)}
+          onEdit={() => onEdit(id)}
         />
-        <input type="text" className="edit" defaultValue="Editing task" />
+        <form onSubmit={onSubmit}>
+          <input type="text" className="edit" value={item.description} onChange={changeItemHandler} />
+        </form>
       </li>
     )
   })
@@ -38,6 +60,7 @@ TaskList.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
   onComplete: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
 }
 
 export default TaskList
