@@ -1,4 +1,4 @@
-Выгруженный проект: https://todo-app-copy-l3w4uurck-pavels-projects-48d9cae3.vercel.app
+Выгруженный проект: https://todo-app-copy.vercel.app/
 
 Примечания:
   1. Лекция 1.3.20
@@ -8,7 +8,6 @@
     (*)Текст предупреждения: 
     Warning: Task: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.
 
-2. Редактирование задач в процессе
 
 
 
