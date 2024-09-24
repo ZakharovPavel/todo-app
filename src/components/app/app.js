@@ -62,25 +62,6 @@ export default class App extends Component {
     })
   }
 
-  // changeItem = (id, text) => {
-  //   this.setState(({ taskData }) => {
-  //     const idx = taskData.findIndex((item) => item.id === id)
-
-  //     const oldItem = taskData[idx]
-  //     const createdDate = new Date().toString()
-  //     const newItem = {
-  //       ...oldItem,
-  //       description: text,
-  //       created: createdDate,
-  //       editing: false,
-  //     }
-
-  //     const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
-
-  //     return { taskData: newArray }
-  //   })
-  // }
-
   changeItem = (nextItem) => {
     this.setState(({ taskData }) => {
       return {
