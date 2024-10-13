@@ -1,7 +1,6 @@
 import { formatDistanceToNow } from 'date-fns'
 import PropTypes from 'prop-types'
 import './task.css'
-// import { useEffect, useState } from 'react'
 
 function Task({
   description = '',
@@ -16,42 +15,6 @@ function Task({
   onStartTimer = () => {},
   onStopTimer = () => {},
 }) {
-  // const [isActive, setIsActive] = useState(false)
-  // const [secondsLeft, setSecondsLeft] = useState(seconds)
-  // const [minutesLeft, setMinutesLeft] = useState(minutes)
-
-  // useEffect(() => {
-  //   let timer = null
-
-  //   if (isActive && secondsLeft > 0) {
-  //     timer = setInterval(() => {
-  //       // if (secondsLeft === 0 && minutesLeft > 0) {
-  //       if (secondsLeft === 0) {
-  //         console.log('timer.if')
-
-  //         setMinutesLeft((prevMinutes) => prevMinutes - 1)
-  //         setSecondsLeft(59)
-  //       } else {
-  //         console.log('timer.else')
-  //         setSecondsLeft((prevTime) => prevTime - 1)
-  //       }
-  //     }, 1000)
-  //   } else if (secondsLeft === 0 && minutesLeft > 0) {
-  //     console.log('else.if')
-  //     setMinutesLeft((prevMinutes) => prevMinutes - 1)
-  //     setSecondsLeft(59)
-  //   } else {
-  //     setIsActive(false)
-  //   }
-  //   console.log(isActive)
-
-  //   return () => clearInterval(timer)
-  // }, [isActive, secondsLeft, minutesLeft, onComplete])
-
-  // const startTimer = () => {
-  //   setIsActive(true)
-  // }
-
   const createdCounter = formatDistanceToNow(new Date(created), {
     includeSeconds: true,
     addSuffix: true,

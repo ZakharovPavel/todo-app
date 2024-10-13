@@ -1,6 +1,5 @@
 import { Component } from 'react'
 
-// import Header from '../header'
 import Footer from '../footer/footer'
 import TaskList from '../task-list/task-list'
 import './app.css'
