@@ -1,10 +1,10 @@
 import { Component } from 'react'
 
-import Header from '../header'
+// import Header from '../header'
 import Footer from '../footer/footer'
 import TaskList from '../task-list/task-list'
-
 import './app.css'
+import NewTaskForm from '../new-task-form'
 
 export default class App extends Component {
   static filterItems = (taskData, filter) => {
@@ -35,9 +35,12 @@ export default class App extends Component {
       const idx = taskData.findIndex((item) => item.id === id)
 
       const oldItem = taskData[idx]
+      const { timerId } = oldItem
       const newItem = {
         ...oldItem,
         completed: !oldItem.completed,
+        isTimerActive: false,
+        timerId: clearInterval(timerId),
       }
 
       const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
@@ -73,8 +76,8 @@ export default class App extends Component {
     })
   }
 
-  addItem = (text) => {
-    const newTask = this.createTaskItem(text)
+  addItem = (text, minutes, seconds) => {
+    const newTask = this.createTaskItem(text, minutes, seconds)
 
     this.setState(({ taskData }) => {
       const newArr = [...taskData, newTask]
@@ -110,17 +113,93 @@ export default class App extends Component {
     })
   }
 
-  createTaskItem(description) {
+  // eslint-disable-next-line react/sort-comp
+  createTaskItem(description, minutes, seconds) {
     const createdDate = new Date().toString()
+    const regexTime = /^\d+$/
 
     return {
       description,
       created: createdDate,
       editing: false,
       completed: false,
+      minutes: minutes === '' ? 0 : minutes,
+      seconds: regexTime.test(seconds) ? seconds : 0,
+      timerId: null,
+      isTimerActive: false,
       // eslint-disable-next-line no-plusplus
       id: this.taskId++,
     }
+  }
+
+  getTaskItem = (id) => {
+    const { taskData } = this.state
+    const filteredTask = taskData.filter((el) => el.id === id)
+    const [oldItem] = filteredTask
+
+    return oldItem
+  }
+
+  startTimer = (id) => {
+    if (this.getTaskItem(id).isTimerActive) return
+    const timerId = setInterval(() => {
+      const { taskData } = this.state
+      const filteredTask = taskData.filter((el) => el.id === id)
+
+      if (filteredTask.length === 0) return
+
+      const idx = taskData.findIndex((el) => el.id === id)
+
+      const [oldItem] = filteredTask
+      const { minutes, seconds } = oldItem
+
+      let newItem = {}
+      if ((minutes === 0 && seconds === 0) || minutes === undefined || seconds === undefined) {
+        newItem = {
+          ...oldItem,
+          minutes: oldItem.minutes,
+          seconds: oldItem.seconds,
+          isTimerActive: false,
+          timerId: clearInterval(timerId),
+        }
+      } else if (seconds === 0) {
+        newItem = {
+          ...oldItem,
+          minutes: oldItem.minutes - 1,
+          seconds: 59,
+          timerId,
+          isTimerActive: true,
+        }
+      } else {
+        newItem = {
+          ...oldItem,
+          seconds: oldItem.seconds - 1,
+          timerId,
+          isTimerActive: true,
+        }
+      }
+
+      const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+      this.setState({
+        taskData: newArray,
+      })
+    }, 1000)
+  }
+
+  stopTimer = (id) => {
+    const { taskData } = this.state
+    const idx = taskData.findIndex((el) => el.id === id)
+    const oldItem = this.getTaskItem(id)
+    const { timerId } = oldItem
+    const newItem = {
+      ...oldItem,
+      isTimerActive: false,
+    }
+    const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+    this.setState({
+      taskData: newArray,
+    })
+    clearInterval(timerId)
   }
 
   render() {
@@ -131,13 +210,15 @@ export default class App extends Component {
 
     return (
       <section className="todoapp">
-        <Header onItemAdded={this.addItem} />
+        <NewTaskForm onItemAdded={this.addItem} />
         <TaskList
           tasks={filteredItems}
           onComplete={this.onComplete}
           onDelete={this.deleteItem}
           onEdit={this.onEdit}
           onChangeItem={this.changeItem}
+          onStartTimer={this.startTimer}
+          onStopTimer={this.stopTimer}
         />
         <Footer
           taskCounter={activeTaskCounter}

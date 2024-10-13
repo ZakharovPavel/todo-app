@@ -10,10 +10,12 @@ function TaskList({
   onDelete = () => {},
   onEdit = () => {},
   onChangeItem = () => {},
+  onStartTimer = () => {},
+  onStopTimer = () => {},
 }) {
   const elements = tasks.map((item) => {
     const { id, ...taskProps } = item
-    const { description, created, editing, completed } = taskProps
+    const { description, created, editing, completed, minutes, seconds } = taskProps
 
     let classNames
     if (item.completed) classNames = 'completed'
@@ -41,6 +43,11 @@ function TaskList({
           onComplete={() => onComplete(id)}
           onDelete={() => onDelete(id)}
           onEdit={() => onEdit(id)}
+          minutes={minutes}
+          seconds={seconds}
+          id={id}
+          onStartTimer={onStartTimer}
+          onStopTimer={onStopTimer}
         />
         <form onSubmit={onSubmit}>
           <input type="text" className="edit" value={item.description} onChange={changeItemHandler} />
