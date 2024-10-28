@@ -14,6 +14,7 @@ function Task({
   id = 0,
   onStartTimer = () => {},
   onStopTimer = () => {},
+  isTimerActive = false,
 }) {
   const createdCounter = formatDistanceToNow(new Date(created), {
     includeSeconds: true,
@@ -28,8 +29,18 @@ function Task({
           {description}
         </span>
         <span className="description">
-          <button type="button" className="icon icon-play" aria-label="Play" onClick={() => onStartTimer(id)} />
-          <button type="button" className="icon icon-pause" aria-label="Pause" onClick={() => onStopTimer(id)} />
+          {!isTimerActive && (
+            <button
+              type="button"
+              className="icon icon-play"
+              aria-label="Play"
+              onClick={() => onStartTimer(id)}
+              disabled={completed}
+            />
+          )}
+          {isTimerActive && (
+            <button type="button" className="icon icon-pause" aria-label="Pause" onClick={() => onStopTimer(id)} />
+          )}
           <span className="timer">
             {minutes}:{seconds}
           </span>

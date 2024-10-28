@@ -15,7 +15,7 @@ function TaskList({
 }) {
   const elements = tasks.map((item) => {
     const { id, ...taskProps } = item
-    const { description, created, editing, completed, minutes, seconds } = taskProps
+    const { description, created, editing, completed, minutes, seconds, isTimerActive } = taskProps
 
     let classNames
     if (item.completed) classNames = 'completed'
@@ -48,6 +48,7 @@ function TaskList({
           id={id}
           onStartTimer={onStartTimer}
           onStopTimer={onStopTimer}
+          isTimerActive={isTimerActive}
         />
         <form onSubmit={onSubmit}>
           <input type="text" className="edit" value={item.description} onChange={changeItemHandler} />

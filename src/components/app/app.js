@@ -115,15 +115,14 @@ export default class App extends Component {
   // eslint-disable-next-line react/sort-comp
   createTaskItem(description, minutes, seconds) {
     const createdDate = new Date().toString()
-    const regexTime = /^\d+$/
 
     return {
       description,
       created: createdDate,
       editing: false,
       completed: false,
-      minutes: minutes === '' ? 0 : minutes,
-      seconds: regexTime.test(seconds) ? seconds : 0,
+      minutes: minutes < 10 ? `0${minutes}` : minutes,
+      seconds: seconds < 10 ? `0${seconds}` : seconds,
       timerId: null,
       isTimerActive: false,
       // eslint-disable-next-line no-plusplus
@@ -140,7 +139,23 @@ export default class App extends Component {
   }
 
   startTimer = (id) => {
-    if (this.getTaskItem(id).isTimerActive) return
+    const currentItem = this.getTaskItem(id)
+    if (currentItem.isTimerActive) return
+
+    this.setState(({ taskData }) => {
+      const idx = taskData.findIndex((item) => item.id === id)
+      const newItem = {
+        ...currentItem,
+        isTimerActive: true,
+      }
+
+      const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+
+      return { taskData: newArray }
+    })
+
+    // console.log(id)
+
     const timerId = setInterval(() => {
       const { taskData } = this.state
       const filteredTask = taskData.filter((el) => el.id === id)
@@ -153,7 +168,7 @@ export default class App extends Component {
       const { minutes, seconds } = oldItem
 
       let newItem = {}
-      if ((minutes === 0 && seconds === 0) || minutes === undefined || seconds === undefined) {
+      if (Number(minutes) === 0 && Number(seconds) === 0) {
         newItem = {
           ...oldItem,
           minutes: oldItem.minutes,
@@ -161,18 +176,18 @@ export default class App extends Component {
           isTimerActive: false,
           timerId: clearInterval(timerId),
         }
-      } else if (seconds === 0) {
+      } else if (Number(seconds) === 0 && Number(minutes) !== 0) {
         newItem = {
           ...oldItem,
-          minutes: oldItem.minutes - 1,
+          minutes: [oldItem.minutes <= 10 ? `0${Number(oldItem.minutes - 1)}` : `${Number(oldItem.minutes - 1)}`],
           seconds: 59,
           timerId,
           isTimerActive: true,
         }
-      } else {
+      } else if (Number(seconds) > 0) {
         newItem = {
           ...oldItem,
-          seconds: oldItem.seconds - 1,
+          seconds: [oldItem.seconds <= 10 ? `0${Number(oldItem.seconds - 1)}` : `${Number(oldItem.seconds - 1)}`],
           timerId,
           isTimerActive: true,
         }

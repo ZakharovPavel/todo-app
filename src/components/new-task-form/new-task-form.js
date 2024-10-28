@@ -21,11 +21,15 @@ export default class NewTaskForm extends Component {
 
   onMinutesChange = (e) => {
     const reg = /^\d+$/
-    if (!reg.test(e.target.value)) {
-      // empty
-    } else if (e.target.value === '') {
+    if (e.target.value === '') {
       this.setState({
-        minutes: 0,
+        minutes: '',
+      })
+    } else if (!reg.test(e.target.value)) {
+      // empty
+    } else if (e.target.value === '0') {
+      this.setState({
+        minutes: Number(0),
       })
     } else {
       this.setState({
@@ -36,7 +40,11 @@ export default class NewTaskForm extends Component {
 
   onSecondsChange = (e) => {
     const reg = /^\d+$/
-    if (!reg.test(e.target.value)) {
+    if (e.target.value === '') {
+      this.setState({
+        seconds: '',
+      })
+    } else if (!reg.test(e.target.value)) {
       // empty
     } else if (e.target.value > 59) {
       this.setState({
@@ -52,7 +60,7 @@ export default class NewTaskForm extends Component {
   onSubmit = (e) => {
     e.preventDefault()
 
-    const { description, minutes = 0, seconds = 0 } = this.state
+    const { description, minutes, seconds } = this.state
     const { onItemAdded } = this.props
 
     if (description.trim() === '') {
