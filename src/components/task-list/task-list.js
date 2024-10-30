@@ -13,6 +13,8 @@ function TaskList({
   onStartTimer = () => {},
   onStopTimer = () => {},
 }) {
+  // console.log(tasks)
+
   const elements = tasks.map((item) => {
     const { id, ...taskProps } = item
     const { description, created, editing, completed, minutes, seconds, isTimerActive } = taskProps

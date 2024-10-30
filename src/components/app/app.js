@@ -1,39 +1,34 @@
-import { Component } from 'react'
+/* eslint-disable consistent-return */
+import { useState } from 'react'
 
 import Footer from '../footer/footer'
 import TaskList from '../task-list/task-list'
 import './app.css'
 import NewTaskForm from '../new-task-form'
 
-export default class App extends Component {
-  static filterItems = (taskData, filter) => {
-    if (filter === 'all') {
-      return taskData
+function App() {
+  const [taskData, setTaskData] = useState([])
+  const [filter, setFilter] = useState('all')
+  const [taskId, setTaskId] = useState(1)
+
+  const filterItems = (tasks, filterState) => {
+    if (filterState === 'all') {
+      return tasks
     }
-    if (filter === 'active') {
-      return taskData.filter((el) => !el.completed)
+    if (filterState === 'active') {
+      return tasks.filter((el) => !el.completed)
     }
-    if (filter === 'completed') {
-      return taskData.filter((el) => el.completed)
+    if (filterState === 'completed') {
+      return tasks.filter((el) => el.completed)
     }
     return ''
   }
 
-  taskId = 1
+  const onComplete = (id) => {
+    setTaskData((prevData) => {
+      const idx = prevData.findIndex((item) => item.id === id)
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      taskData: [],
-      filter: 'all',
-    }
-  }
-
-  onComplete = (id) => {
-    this.setState(({ taskData }) => {
-      const idx = taskData.findIndex((item) => item.id === id)
-
-      const oldItem = taskData[idx]
+      const oldItem = prevData[idx]
       const { timerId } = oldItem
       const newItem = {
         ...oldItem,
@@ -42,79 +37,41 @@ export default class App extends Component {
         timerId: clearInterval(timerId),
       }
 
-      const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+      const newArray = [...prevData.slice(0, idx), newItem, ...prevData.slice(idx + 1)]
 
-      return { taskData: newArray }
+      return newArray
     })
   }
 
-  onEdit = (id) => {
-    this.setState(({ taskData }) => {
-      const idx = taskData.findIndex((item) => item.id === id)
+  const onEdit = (id) => {
+    setTaskData((prevData) => {
+      const idx = prevData.findIndex((item) => item.id === id)
 
-      const oldItem = taskData[idx]
+      const oldItem = prevData[idx]
       const newItem = {
         ...oldItem,
         editing: !oldItem.editing,
       }
 
-      const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+      const newArray = [...prevData.slice(0, idx), newItem, ...prevData.slice(idx + 1)]
 
-      return { taskData: newArray }
+      return newArray
     })
   }
 
-  changeItem = (nextItem) => {
-    this.setState(({ taskData }) => {
-      return {
-        taskData: taskData.map((t) => {
-          if (t.id === nextItem.id) return nextItem
-          return t
-        }),
-      }
-    })
-  }
-
-  addItem = (text, minutes, seconds) => {
-    const newTask = this.createTaskItem(text, minutes, seconds)
-
-    this.setState(({ taskData }) => {
-      const newArr = [...taskData, newTask]
-
-      return {
-        taskData: newArr,
-      }
-    })
-  }
-
-  deleteItem = (id) => {
-    this.setState(({ taskData }) => {
-      const idx = taskData.findIndex((item) => item.id === id)
-      const newArray = [...taskData.slice(0, idx), ...taskData.slice(idx + 1)]
-
-      return { taskData: newArray }
-    })
-  }
-
-  onFilterChange = (name) => {
-    this.setState({
-      filter: name,
-    })
-  }
-
-  clearCompletedItems = () => {
-    this.setState(({ taskData }) => {
-      const newArr = taskData.filter((el) => !el.completed)
-
-      return {
-        taskData: newArr,
-      }
+  const changeItem = (nextItem) => {
+    setTaskData((prevData) => {
+      return prevData.map((t) => {
+        if (t.id === nextItem.id) return nextItem
+        return t
+      })
     })
   }
 
   // eslint-disable-next-line react/sort-comp
-  createTaskItem(description, minutes, seconds) {
+  function createTaskItem(description, minutes, seconds) {
     const createdDate = new Date().toString()
+    setTaskId((prev) => prev + 1)
 
     return {
       description,
@@ -126,45 +83,74 @@ export default class App extends Component {
       timerId: null,
       isTimerActive: false,
       // eslint-disable-next-line no-plusplus
-      id: this.taskId++,
+      id: taskId,
     }
   }
 
-  getTaskItem = (id) => {
-    const { taskData } = this.state
+  //
+  const addItem = (text, minutes, seconds) => {
+    const newTask = createTaskItem(text, minutes, seconds)
+
+    setTaskData((prevData) => {
+      const newArr = [...prevData, newTask]
+
+      return newArr
+    })
+  }
+
+  const deleteItem = (id) => {
+    setTaskData((prevData) => {
+      const idx = prevData.findIndex((item) => item.id === id)
+      const newArray = [...prevData.slice(0, idx), ...prevData.slice(idx + 1)]
+
+      return newArray
+    })
+  }
+
+  const onFilterChange = (name) => {
+    setFilter(name)
+  }
+
+  const clearCompletedItems = () => {
+    setTaskData((prevData) => {
+      const newArr = prevData.filter((el) => !el.completed)
+
+      return newArr
+    })
+  }
+
+  const getTaskItem = (id) => {
     const filteredTask = taskData.filter((el) => el.id === id)
     const [oldItem] = filteredTask
 
     return oldItem
   }
 
-  startTimer = (id) => {
-    const currentItem = this.getTaskItem(id)
+  const startTimer = (id) => {
+    const currentItem = getTaskItem(id)
     if (currentItem.isTimerActive) return
 
-    this.setState(({ taskData }) => {
-      const idx = taskData.findIndex((item) => item.id === id)
+    setTaskData((prevData) => {
+      const idx = prevData.findIndex((item) => item.id === id)
       const newItem = {
         ...currentItem,
         isTimerActive: true,
       }
 
-      const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+      const newArray = [...prevData.slice(0, idx), newItem, ...prevData.slice(idx + 1)]
 
-      return { taskData: newArray }
+      return newArray
     })
 
-    // console.log(id)
-
     const timerId = setInterval(() => {
-      const { taskData } = this.state
       const filteredTask = taskData.filter((el) => el.id === id)
 
       if (filteredTask.length === 0) return
 
-      const idx = taskData.findIndex((el) => el.id === id)
+      // const idx = taskData.findIndex((el) => el.id === id)
 
       const [oldItem] = filteredTask
+
       const { minutes, seconds } = oldItem
 
       let newItem = {}
@@ -179,7 +165,7 @@ export default class App extends Component {
       } else if (Number(seconds) === 0 && Number(minutes) !== 0) {
         newItem = {
           ...oldItem,
-          minutes: [oldItem.minutes <= 10 ? `0${Number(oldItem.minutes - 1)}` : `${Number(oldItem.minutes - 1)}`],
+          minutes: oldItem.minutes <= 10 ? `0${Number(oldItem.minutes - 1)}` : `${Number(oldItem.minutes - 1)}`,
           seconds: 59,
           timerId,
           isTimerActive: true,
@@ -187,60 +173,55 @@ export default class App extends Component {
       } else if (Number(seconds) > 0) {
         newItem = {
           ...oldItem,
-          seconds: [oldItem.seconds <= 10 ? `0${Number(oldItem.seconds - 1)}` : `${Number(oldItem.seconds - 1)}`],
+          seconds: oldItem.seconds <= 10 ? `0${Number(oldItem.seconds - 1)}` : `${Number(oldItem.seconds - 1)}`,
           timerId,
           isTimerActive: true,
         }
       }
 
-      const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
-      this.setState({
-        taskData: newArray,
-      })
+      // const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
+
+      setTaskData((prevData) => prevData.map((task) => (task.id === id ? newItem : task)))
     }, 1000)
   }
 
-  stopTimer = (id) => {
-    const { taskData } = this.state
+  const stopTimer = (id) => {
     const idx = taskData.findIndex((el) => el.id === id)
-    const oldItem = this.getTaskItem(id)
+    const oldItem = getTaskItem(id)
     const { timerId } = oldItem
     const newItem = {
       ...oldItem,
       isTimerActive: false,
     }
     const newArray = [...taskData.slice(0, idx), newItem, ...taskData.slice(idx + 1)]
-    this.setState({
-      taskData: newArray,
-    })
+    setTaskData(newArray)
     clearInterval(timerId)
   }
 
-  render() {
-    const { taskData, filter } = this.state
-    const filteredItems = App.filterItems(taskData, filter)
+  const filteredItems = filterItems(taskData, filter)
 
-    const activeTaskCounter = taskData.filter((el) => !el.completed).length
+  const activeTaskCounter = taskData.filter((el) => !el.completed).length
 
-    return (
-      <section className="todoapp">
-        <NewTaskForm onItemAdded={this.addItem} />
-        <TaskList
-          tasks={filteredItems}
-          onComplete={this.onComplete}
-          onDelete={this.deleteItem}
-          onEdit={this.onEdit}
-          onChangeItem={this.changeItem}
-          onStartTimer={this.startTimer}
-          onStopTimer={this.stopTimer}
-        />
-        <Footer
-          taskCounter={activeTaskCounter}
-          filter={filter}
-          onFilterChange={this.onFilterChange}
-          onClearCompleted={this.clearCompletedItems}
-        />
-      </section>
-    )
-  }
+  return (
+    <section className="todoapp">
+      <NewTaskForm onItemAdded={addItem} />
+      <TaskList
+        tasks={filteredItems}
+        onComplete={onComplete}
+        onDelete={deleteItem}
+        onEdit={onEdit}
+        onChangeItem={changeItem}
+        onStartTimer={startTimer}
+        onStopTimer={stopTimer}
+      />
+      <Footer
+        taskCounter={activeTaskCounter}
+        filter={filter}
+        onFilterChange={onFilterChange}
+        onClearCompleted={clearCompletedItems}
+      />
+    </section>
+  )
 }
+
+export default App

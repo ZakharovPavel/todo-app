@@ -1,118 +1,86 @@
 import PropTypes from 'prop-types'
-import { Component } from 'react'
+import { useState } from 'react'
 
 import './new-task-form.css'
 
-export default class NewTaskForm extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      description: '',
-      minutes: '',
-      seconds: '',
-    }
+function NewTaskForm({ onItemAdded }) {
+  const [description, setDescription] = useState('')
+  const [minutes, setMinutes] = useState('')
+  const [seconds, setSeconds] = useState('')
+
+  const onDescriptionChange = (e) => {
+    setDescription(e.target.value)
   }
 
-  onDescriptionChange = (e) => {
-    this.setState({
-      description: e.target.value,
-    })
-  }
-
-  onMinutesChange = (e) => {
+  const onMinutesChange = (e) => {
     const reg = /^\d+$/
     if (e.target.value === '') {
-      this.setState({
-        minutes: '',
-      })
+      setMinutes('')
     } else if (!reg.test(e.target.value)) {
       // empty
     } else if (e.target.value === '0') {
-      this.setState({
-        minutes: Number(0),
-      })
+      setMinutes(Number(0))
     } else {
-      this.setState({
-        minutes: e.target.value,
-      })
+      setMinutes(e.target.value)
     }
   }
 
-  onSecondsChange = (e) => {
+  const onSecondsChange = (e) => {
     const reg = /^\d+$/
     if (e.target.value === '') {
-      this.setState({
-        seconds: '',
-      })
+      setSeconds('')
     } else if (!reg.test(e.target.value)) {
       // empty
     } else if (e.target.value > 59) {
-      this.setState({
-        seconds: 59,
-      })
+      setSeconds(59)
     } else {
-      this.setState({
-        seconds: e.target.value,
-      })
+      setSeconds(e.target.value)
     }
   }
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault()
 
-    const { description, minutes, seconds } = this.state
-    const { onItemAdded } = this.props
-
     if (description.trim() === '') {
-      this.setState({ description: '' })
+      setDescription('')
       return
     }
 
     onItemAdded(description, minutes, seconds)
-    this.setState({
-      description: '',
-      minutes: '',
-      seconds: '',
-    })
+    setDescription('')
+    setMinutes('')
+    setSeconds('')
   }
 
-  render() {
-    const { description, minutes, seconds } = this.state
-
-    return (
-      <header className="header">
-        <h1>todos</h1>
-        <form className="new-todo-form" onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            className="new-todo"
-            onChange={this.onDescriptionChange}
-            placeholder="Task"
-            value={description}
-          />
-          <input
-            type="text"
-            className="new-todo-form__timer"
-            onChange={this.onMinutesChange}
-            placeholder="Min"
-            value={minutes}
-          />
-          <input
-            type="text"
-            className="new-todo-form__timer"
-            onChange={this.onSecondsChange}
-            placeholder="Sec"
-            value={seconds}
-          />
-          <button type="submit" style={{ display: 'none' }}>
-            button
-          </button>
-        </form>
-      </header>
-    )
-  }
+  return (
+    <header className="header">
+      <h1>todos</h1>
+      <form className="new-todo-form" onSubmit={onSubmit}>
+        <input type="text" className="new-todo" onChange={onDescriptionChange} placeholder="Task" value={description} />
+        <input
+          type="text"
+          className="new-todo-form__timer"
+          onChange={onMinutesChange}
+          placeholder="Min"
+          value={minutes}
+        />
+        <input
+          type="text"
+          className="new-todo-form__timer"
+          onChange={onSecondsChange}
+          placeholder="Sec"
+          value={seconds}
+        />
+        <button type="submit" style={{ display: 'none' }}>
+          button
+        </button>
+      </form>
+    </header>
+  )
 }
 
 NewTaskForm.propTypes = {
   onItemAdded: PropTypes.func.isRequired,
 }
+
+export default NewTaskForm

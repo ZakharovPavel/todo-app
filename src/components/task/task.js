@@ -21,6 +21,9 @@ function Task({
     addSuffix: true,
   })
 
+  // console.log(`task min and sec: ${minutes}, ${seconds}`)
+  // console.log(description, id)
+
   return (
     <div className="view">
       <input className="toggle" type="checkbox" checked={completed} onChange={onComplete} />
@@ -35,7 +38,7 @@ function Task({
               className="icon icon-play"
               aria-label="Play"
               onClick={() => onStartTimer(id)}
-              disabled={completed}
+              disabled={completed || (minutes === 0 && seconds === 0)}
             />
           )}
           {isTimerActive && (
